@@ -36,6 +36,20 @@ class Board:
         self.board = [
             [Square(row, column) for column in COLUMNS] for row in ROWS
         ]
+        self.piece_list = [
+            Piece("K", "w"),  # Kings
+            Piece("K", "b"),
+            Piece("Q", "w"),  # Queens
+            Piece("Q", "b"),
+            Piece("R", "w"),  # Rooks
+            Piece("R", "b"),
+            Piece("B", "w"),  # Bishops
+            Piece("B", "b"),
+            Piece("N", "w"),  # Knights
+            Piece("N", "b"),
+            Piece("P", "w"),  # Pawns
+            Piece("P", "b"),
+        ]
 
     def __repr__(self):
         """
@@ -67,20 +81,7 @@ class Piece:
         self.color = color
         self.has_moved = False  # For en-passant handling. Will be common to all
         # pieces anyway.
-        self.piece_list = [
-            Piece("K", "w"),  # Kings
-            Piece("K", "b"),
-            Piece("Q", "w"),  # Queens
-            Piece("Q", "b"),
-            Piece("R", "w"),  # Rooks
-            Piece("R", "b"),
-            Piece("B", "w"),  # Bishops
-            Piece("B", "b"),
-            Piece("N", "w"),  # Knights
-            Piece("N", "b"),
-            Piece("P", "w"),  # Pawns
-            Piece("P", "b"),
-        ]
+        
 
     def __repr__(self):
         """

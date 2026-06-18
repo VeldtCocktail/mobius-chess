@@ -6,7 +6,7 @@ from main import Game, Board, Piece
 class GUI():
     SCREEN_SIZE = (1280, 680)
     CENTER = (SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2)
-    CIRCLE_RADIUS_UNIT = min(SCREEN_SIZE[0], SCREEN_SIZE[1]) // 15
+    CIRCLE_RADIUS_UNIT = min(SCREEN_SIZE[0], SCREEN_SIZE[1]) // (2.2 * 5)
 
     def __init__(self, game:Game):
         pygame.init()
@@ -46,8 +46,8 @@ class GUI():
         for r in range(1, 6):
             ct_circle(r)
 
-        for a in range(0, 360, 45):
-            ct_line(a)
+        for da in range(0, 3600, 225):
+            ct_line(da / 10)
 
     def render_colored_circular_board(self):
         def ct_ring_sector(r_units, start_angle, color):
@@ -61,12 +61,12 @@ class GUI():
 
             step = 1 # degrees
 
-            for angle in range(ds_angle, de_angle + 1, step * 10):
+            for angle in range(ds_angle, de_angle + step, step * 5):
                 x = self.CENTER[0] + outer_r * math.cos(math.radians(angle / 10))
                 y = self.CENTER[1] - outer_r * math.sin(math.radians(angle / 10))
                 points.append((x, y))
 
-            for angle in range(de_angle, ds_angle - 1, -10 * step):
+            for angle in range(de_angle, ds_angle - step, -5 * step):
                 x = self.CENTER[0] + inner_r * math.cos(math.radians(angle / 10))
                 y = self.CENTER[1] - inner_r * math.sin(math.radians(angle / 10))
                 points.append((x, y))
@@ -87,8 +87,8 @@ class GUI():
 
             self.screen.fill("white")
 
-            self.render_circular_board()
             self.render_colored_circular_board()
+            self.render_circular_board()
 
             pygame.display.flip()
             self.clock.tick(60)

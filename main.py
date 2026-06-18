@@ -26,7 +26,7 @@ class Board:
     """
     Represents the mobius chess board.
     Rows number 1, 2, 15 and 16 are the white pieces starting rows.
-    The white queen stars on D1 and the white king starts on D16.
+    The white queen starts on D1 and the white king starts on D16.
     """
 
     def __init__(self):

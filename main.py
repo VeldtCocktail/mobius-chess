@@ -1,5 +1,22 @@
 COLUMNS = [chr(i) for i in range(ord("a"), ord("d") + 1)]
-ROWS = [chr(i) for i in range(ord("1"), ord("16") + 1)]
+ROWS = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+]
 
 
 class Square:

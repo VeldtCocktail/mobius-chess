@@ -98,14 +98,14 @@ class Game:
         """
         # White Pieces
         # Rooks
-        board.set_piece(COLUMN_ROOKS, 16, Piece("R", "w"))
-        board.set_piece(COLUMN_ROOKS, 1, Piece("R", "w"))
+        board.set_piece(COLUMN_ROOKS, WHITE_KING_ROW, Piece("R", "w"))
+        board.set_piece(COLUMN_ROOKS, WHITE_QUEEN_ROW, Piece("R", "w"))
         # Knights
-        board.set_piece(COLUMN_KNIGHTS, 16, Piece("N", "w"))
-        board.set_piece(COLUMN_KNIGHTS, 1, Piece("N", "w"))
+        board.set_piece(COLUMN_KNIGHTS, WHITE_KING_ROW, Piece("N", "w"))
+        board.set_piece(COLUMN_KNIGHTS, WHITE_QUEEN_ROW, Piece("N", "w"))
         # Bishops
-        board.set_piece(COLUMN_KNIGHTS, 16, Piece("B", "w"))
-        board.set_piece(COLUMN_BISHOPS, 1, Piece("B", "w"))
+        board.set_piece(COLUMN_BISHOPS, WHITE_KING_ROW, Piece("B", "w"))
+        board.set_piece(COLUMN_BISHOPS, WHITE_QUEEN_ROW, Piece("B", "w"))
         # Queen
         board.set_piece("d", WHITE_QUEEN_ROW, Piece("Q", "w"))
         # King
@@ -113,18 +113,26 @@ class Game:
 
         # Black Pieces
         # Rooks
-        board.set_piece(COLUMN_ROOKS, 9, Piece("R", "b"))
-        board.set_piece(COLUMN_ROOKS, 8, Piece("R", "b"))
+        board.set_piece(COLUMN_ROOKS, BLACK_KING_ROW, Piece("R", "b"))
+        board.set_piece(COLUMN_ROOKS, BLACK_QUEEN_ROW, Piece("R", "b"))
         # Knights
-        board.set_piece(COLUMN_KNIGHTS, 9, Piece("N", "b"))
-        board.set_piece(COLUMN_KNIGHTS, 8, Piece("N", "b"))
+        board.set_piece(COLUMN_KNIGHTS, BLACK_KING_ROW, Piece("N", "b"))
+        board.set_piece(COLUMN_KNIGHTS, BLACK_QUEEN_ROW, Piece("N", "b"))
         # Bishops
-        board.set_piece(COLUMN_KNIGHTS, 9, Piece("B", "b"))
-        board.set_piece(COLUMN_BISHOPS, 8, Piece("B", "b"))
+        board.set_piece(COLUMN_BISHOPS, BLACK_KING_ROW, Piece("B", "b"))
+        board.set_piece(COLUMN_BISHOPS, BLACK_QUEEN_ROW, Piece("B", "b"))
         # Queen
         board.set_piece("d", BLACK_QUEEN_ROW, Piece("Q", "b"))
         # King
         board.set_piece("d", BLACK_KING_ROW, Piece("K", "b"))
+
+        # all Pawns
+        for col in COLUMNS:
+            for row in WHITE_PAWNS_ROWS:
+                board.set_piece(col, row, Piece("P", "w"))
+
+            for row in BLACK_PAWNS_ROWS:
+                board.set_piece(col, row, Piece("P", "b"))
 
     def __init__(self):
         """

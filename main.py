@@ -25,7 +25,8 @@ class Square:
 class Board:
     """
     Represents the mobius chess board.
-    Row number 1 are the first raw for white pieces
+    Rows number 1, 2, 15 and 16 are the white pieces starting rows.
+    The white queen stars on D1 and the white king starts on D16.
     """
 
     def __init__(self):

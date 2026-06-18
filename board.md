@@ -1,3 +1,5 @@
+Starting squares :
+
 |Row|a|b|c|d|
 |-|-|-|-|-|
 |16|R◆|N◆|B◆|K◆|

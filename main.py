@@ -1,6 +1,12 @@
 COLUMNS = [chr(i) for i in range(ord("a"), ord("d") + 1)]
 ROWS = [i for i in range(1, 17)]
 
+WHITE_QUEEN_ROW = 1
+WHITE_KING_ROW = 16
+BLACK_QUEEN_ROW = 8
+BLACK_KING_ROW = 9
+WHITE_PAWNS_ROWS = [2, 15]
+BLACK_PAWNS_ROWS = [7, 10]
 
 class Square:
     """Represents a square on the board."""
@@ -36,20 +42,6 @@ class Board:
         self.board = [
             [Square(row, column) for column in COLUMNS] for row in ROWS
         ]
-        self.piece_list = [
-            Piece("K", "w"),  # Kings
-            Piece("K", "b"),
-            Piece("Q", "w"),  # Queens
-            Piece("Q", "b"),
-            Piece("R", "w"),  # Rooks
-            Piece("R", "b"),
-            Piece("B", "w"),  # Bishops
-            Piece("B", "b"),
-            Piece("N", "w"),  # Knights
-            Piece("N", "b"),
-            Piece("P", "w"),  # Pawns
-            Piece("P", "b"),
-        ]
 
     def __repr__(self):
         """
@@ -79,8 +71,8 @@ class Piece:
         """
         self.type = type
         self.color = color
-        self.has_moved = False  # For en-passant handling. Will be common to all
-        # pieces anyway.
+        self.has_moved = False # For en-passant handling. Will be common to all
+                               # pieces anyway
         
 
     def __repr__(self):

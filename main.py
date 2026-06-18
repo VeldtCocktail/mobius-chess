@@ -1,21 +1,21 @@
 COLUMNS = [chr(i) for i in range(ord("a"), ord("d") + 1)]
 ROWS = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
 ]
 
 
@@ -36,7 +36,7 @@ class Square:
         """
         Returns a string representation of the square.
         """
-        return f"Square({self.row}, {self.column})"
+        return f"Square({self.column}, {self.row})"
 
 
 class Board:
@@ -54,6 +54,15 @@ class Board:
         """
         return str(self.board)
 
+    def get_square(self, row, column):
+        """
+        Returns the square at the given row and column.
+        Parameters:
+            row (int): The row of the square.
+            column (str): The column of the square.
+        """
+        return self.board[row][column]
+
 
 class Piece:
     """Represents a piece on the board."""
@@ -62,11 +71,25 @@ class Piece:
         """
         Initializes a piece with the given type and color.
         Parameters:
-            type (str): The type of the piece (ex: "pawn", "rook", etc.).
+            type (str): The type of the piece (ex: "P", "R", etc.).
             color (str): The color of the piece (ex: "w", "b").
         """
         self.type = type
         self.color = color
+        self.piece_list = [
+            Piece("K", "w"),  # Kings
+            Piece("K", "b"),
+            Piece("Q", "w"),  # Queens
+            Piece("Q", "b"),
+            Piece("R", "w"),  # Rooks
+            Piece("R", "b"),
+            Piece("B", "w"),  # Bishops
+            Piece("B", "b"),
+            Piece("N", "w"),  # Knights
+            Piece("N", "b"),
+            Piece("P", "w"),  # Pawns
+            Piece("P", "b"),
+        ]
 
     def __repr__(self):
         """

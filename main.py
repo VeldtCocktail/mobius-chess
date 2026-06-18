@@ -141,6 +141,9 @@ class Game:
         self.board = Board()
         self.fill_pieces(self.board)
 
+    def get_board(self):
+        return self.board
+
 
 board = Board()
 print(board)

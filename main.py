@@ -36,7 +36,7 @@ class Square:
         """
         Returns a string representation of the square.
         """
-        return f"Square({self.column}, {self.row})"
+        return f"Square({self.column}, {self.row}, {self.piece})"
 
 
 class Board:
@@ -52,10 +52,10 @@ class Board:
         """
         self.board = [[Square(row, column) for column in COLUMNS] for row in ROWS]
 
-    def set_piece(self, row, col, piece):
+    def set_piece(self, col, row, piece):
         self.board[row - 1][COLUMNS.index(col)].set_piece(piece)
 
-    def get_piece(self, row, col):
+    def get_piece(self, col, row):
         return self.board[row - 1][COLUMNS.index(col)].get_piece()
 
     def __repr__(self):
@@ -137,5 +137,8 @@ class Game:
 board = Board()
 print(board)
 
-board.set_piece(2, "c", Piece("P", "w"))
-print(board.get_piece(2, "c"))
+board.set_piece("c", 2, Piece("P", "w"))
+print(board.get_piece("c", 2))
+
+game = Game()
+print(game.board)

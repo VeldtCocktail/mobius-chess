@@ -16,7 +16,7 @@ class GUI():
         self.clock = pygame.time.Clock()
         self.running = True
 
-    def render_circular_board(self):
+    def render_circular_board_lines(self):
         def ct_circle(radius_units):
             pygame.draw.circle(
                 self.screen, "black", self.CENTER,
@@ -49,7 +49,7 @@ class GUI():
         for da in range(0, 3600, 225):
             ct_line(da / 10)
 
-    def render_colored_circular_board(self):
+    def render_circular_board_color(self):
         def ct_ring_sector(r_units, start_angle, color):
             outer_r = r_units * self.CIRCLE_RADIUS_UNIT
             inner_r = outer_r - self.CIRCLE_RADIUS_UNIT
@@ -87,8 +87,8 @@ class GUI():
 
             self.screen.fill("white")
 
-            self.render_colored_circular_board()
-            self.render_circular_board()
+            self.render_circular_board_color()
+            self.render_circular_board_lines()
 
             pygame.display.flip()
             self.clock.tick(60)

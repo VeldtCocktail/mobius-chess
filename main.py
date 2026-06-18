@@ -40,7 +40,10 @@ class Square:
 
 
 class Board:
-    """Represents the mobius chess board."""
+    """
+    Represents the mobius chess board.
+    Row number 1 are the first raw for white pieces
+    """
 
     def __init__(self):
         """
@@ -61,7 +64,7 @@ class Board:
             row (int): The row of the square.
             column (str): The column of the square.
         """
-        return self.board[row][column]
+        return self.board[row][ord(column) - ord("a")]
 
 
 class Piece:
@@ -76,6 +79,8 @@ class Piece:
         """
         self.type = type
         self.color = color
+        self.has_moved = False  # For en-passant handling. Will be common to all
+        # pieces anyway.
         self.piece_list = [
             Piece("K", "w"),  # Kings
             Piece("K", "b"),

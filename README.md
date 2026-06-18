@@ -3,3 +3,4 @@ A chess variant, inspired by this here [video](https://www.instagram.com/reel/DZ
 
 ## Set up a virtual environment in Python
 ```python -m venv {environment-directory}```
+⚠️ Remember to add your virtual environment directory to your personal .gitignore, as it will be pushed to the directory if not.

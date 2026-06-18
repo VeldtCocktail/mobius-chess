@@ -20,6 +20,13 @@ class Square:
         """
         self.row = row
         self.column = column
+        self.piece = None
+
+    def get_piece(self):
+        return self.piece
+    
+    def set_piece(self, pce):
+        self.piece = pce
 
     def __repr__(self):
         """
@@ -43,20 +50,17 @@ class Board:
             [Square(row, column) for column in COLUMNS] for row in ROWS
         ]
 
+    def set_piece(self, row, col, piece):
+        self.board[row - 1, COLUMNS.index(col)].set_piece(piece)
+
+    def get_piece(self, row, col):
+        return self.board[row - 1, COLUMNS.index(col)].get_piece()
+
     def __repr__(self):
         """
         Returns a string representation of the board.
         """
         return str(self.board)
-
-    def get_square(self, row, column):
-        """
-        Returns the square at the given row and column.
-        Parameters:
-            row (int): The row of the square.
-            column (str): The column of the square.
-        """
-        return self.board[row][ord(column) - ord("a")]
 
 
 class Piece:

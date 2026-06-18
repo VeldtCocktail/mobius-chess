@@ -1,22 +1,61 @@
-FILES = [chr(i) for i in range(ord("1"), ord("4") + 1)]
-ROWS = [chr(i) for i in range(ord("a"), ord("h") + 1)]
+COLUMNS = [chr(i) for i in range(ord("a"), ord("d") + 1)]
+ROWS = [chr(i) for i in range(ord("1"), ord("16") + 1)]
 
 
 class Square:
-    def __init__(self, row, file):
+    """Represents a square on the board."""
+
+    def __init__(self, row, column):
+        """
+        Initializes a square with the given row and col.
+        Parameters:
+            row (str): The row of the square.
+            column (str): The column of the square.
+        """
         self.row = row
-        self.file = file
+        self.column = column
 
     def __repr__(self):
-        return f"Square({self.row}, {self.file})"
+        """
+        Returns a string representation of the square.
+        """
+        return f"Square({self.row}, {self.column})"
 
 
 class Board:
+    """Represents the mobius chess board."""
+
     def __init__(self):
-        self.board = [[Square(row, file) for file in FILES] for row in ROWS]
+        """
+        Initializes the board with a 2D list of squares.
+        """
+        self.board = [[Square(row, column) for column in COLUMNS] for row in ROWS]
 
     def __repr__(self):
+        """
+        Returns a string representation of the board.
+        """
         return str(self.board)
+
+
+class Piece:
+    """Represents a piece on the board."""
+
+    def __init__(self, type, color):
+        """
+        Initializes a piece with the given type and color.
+        Parameters:
+            type (str): The type of the piece (ex: "pawn", "rook", etc.).
+            color (str): The color of the piece (ex: "w", "b").
+        """
+        self.type = type
+        self.color = color
+
+    def __repr__(self):
+        """
+        Returns a string representation of the piece.
+        """
+        return f"Piece({self.type}, {self.color})"
 
 
 board = Board()

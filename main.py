@@ -29,7 +29,9 @@ class Board:
         """
         Initializes the board with a 2D list of squares.
         """
-        self.board = [[Square(row, column) for column in COLUMNS] for row in ROWS]
+        self.board = [
+            [Square(row, column) for column in COLUMNS] for row in ROWS
+        ]
 
     def __repr__(self):
         """

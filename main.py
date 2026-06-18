@@ -51,10 +51,10 @@ class Board:
         ]
 
     def set_piece(self, row, col, piece):
-        self.board[row - 1, COLUMNS.index(col)].set_piece(piece)
+        self.board[row - 1][COLUMNS.index(col)].set_piece(piece)
 
     def get_piece(self, row, col):
-        return self.board[row - 1, COLUMNS.index(col)].get_piece()
+        return self.board[row - 1][COLUMNS.index(col)].get_piece()
 
     def __repr__(self):
         """
@@ -88,3 +88,6 @@ class Piece:
 
 board = Board()
 print(board)
+
+board.set_piece(2, "c", Piece("P", "w"))
+print(board.get_piece(2, "c"))

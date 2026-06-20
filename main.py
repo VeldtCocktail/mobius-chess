@@ -156,6 +156,129 @@ class Game:
 
         return unique
 
+    # --- Check detection helpers ----------------------------------------------
+
+    def _find_king(self, color: str) -> tuple | None:
+        """Return (col, row) of the king of the given color, or None."""
+        for row in ROWS:
+            for col in COLUMNS:
+                p = self.board.get_piece(col, row)
+                if p is not None and p.type == "K" and p.color == color:
+                    return (col, row)
+        return None
+
+    def _is_in_check(self, color: str, board: "Board") -> bool:
+        """
+        Return True if the king of *color* is currently attacked by any
+        enemy piece on *board*.
+
+        We temporarily swap self.board for *board* so that all the existing
+        move-generation methods work unchanged.
+        """
+        original_board = self.board
+        self.board = board
+
+        king_pos = self._find_king(color)
+        if king_pos is None:
+            # No king on the board – nothing to be in check.
+            self.board = original_board
+            return False
+
+        enemy = "b" if color == "w" else "w"
+        in_check = False
+
+        for row in ROWS:
+            if in_check:
+                break
+            for col in COLUMNS:
+                p = self.board.get_piece(col, row)
+                if p is None or p.color != enemy:
+                    continue
+                # Use raw piece-type generators (no phase for attack detection –
+                # phase is a move option, not a threat vector).
+                match p.type:
+                    case "R":
+                        attacks = self._rook_moves(col, row, enemy)
+                    case "N":
+                        attacks = self._knight_moves(col, row, enemy)
+                    case "B":
+                        attacks = self._bishop_moves(col, row, enemy)
+                    case "Q":
+                        attacks = self._queen_moves(col, row, enemy)
+                    case "K":
+                        # Only one-step king attacks (no castling during check calc)
+                        attacks = []
+                        k_idx = self._col_to_idx(col)
+                        for dc, dr in [
+                            (0, 1),
+                            (0, -1),
+                            (1, 0),
+                            (-1, 0),
+                            (1, 1),
+                            (1, -1),
+                            (-1, 1),
+                            (-1, -1),
+                        ]:
+                            nc = k_idx + dc
+                            nr = self._wrap_row(row + dr)
+                            if 0 <= nc < NUM_COLS:
+                                attacks.append(
+                                    self.board.get_square(self._idx_to_col(nc), nr)
+                                )
+                    case "P":
+                        # Pawns attack diagonally in their forward direction only
+                        direction = 1 if enemy == "w" else -1
+                        attacks = []
+                        p_idx = self._col_to_idx(col)
+                        for dc in (-1, 1):
+                            nc = p_idx + dc
+                            if 0 <= nc < NUM_COLS:
+                                attacks.append(
+                                    self.board.get_square(
+                                        self._idx_to_col(nc),
+                                        self._wrap_row(row + direction),
+                                    )
+                                )
+                    case _:
+                        attacks = []
+
+                if any(
+                    sq.column == king_pos[0] and sq.row == king_pos[1] for sq in attacks
+                ):
+                    in_check = True
+                    break
+
+        self.board = original_board
+        return in_check
+
+    def _move_leaves_in_check(
+        self,
+        base_col: str,
+        base_row: int,
+        new_col: str,
+        new_row: int,
+        color: str,
+        ep_capture_pos: tuple | None = None,
+    ) -> bool:
+        """
+        Simulate the move on a scratch board and return True if it leaves
+        *color*'s king in check.
+        """
+        import copy
+
+        scratch_board = copy.deepcopy(self.board)
+
+        piece = scratch_board.get_piece(base_col, base_row)
+        scratch_board.set_piece(base_col, base_row, None)
+        scratch_board.set_piece(new_col, new_row, piece)
+
+        if ep_capture_pos is not None:
+            scratch_board.set_piece(ep_capture_pos[0], ep_capture_pos[1], None)
+
+        return self._is_in_check(color, scratch_board)
+
+    # --------------------------------------------------------------------------
+
     def move(self, base_col: str, base_row: int, new_col: str, new_row: int) -> bool:
         """
         Move the piece on (base_col, base_row) to (new_col, new_row).
@@ -166,6 +289,9 @@ class Game:
           - Castling (moves the rook to its post-castle square).
           - Double pawn push tracking (updates _en_passant_target).
           - Marking every moved piece with has_moved = True.
+          - Check legality: a move is illegal if it leaves (or keeps) the
+            moving player's king in check.  Castling is also illegal when
+            the king passes through or lands on an attacked square.
 
         Returns True if the move was legal and applied; False otherwise
         (board is left unchanged on failure).
@@ -191,16 +317,48 @@ class Game:
         # Castling ?
         castle_rook_from: tuple | None = None
         castle_rook_to: tuple | None = None
+        is_castling = False
         if piece.type == "K" and not piece.has_moved:
             col_delta = self._col_to_idx(new_col) - self._col_to_idx(base_col)
             if abs(col_delta) == 2:
+                is_castling = True
                 if col_delta > 0:  # kingside  (->)
                     castle_rook_from = (COLUMNS[-1], base_row)
                     castle_rook_to = (COLUMNS[self._col_to_idx(new_col) - 1], base_row)
-
                 else:  # queenside (<-)
                     castle_rook_from = (COLUMNS[0], base_row)
                     castle_rook_to = (COLUMNS[self._col_to_idx(new_col) + 1], base_row)
+
+        # --- Check legality ---------------------------------------------------
+        # 1. The move must not leave the mover's king in check.
+        if self._move_leaves_in_check(
+            base_col, base_row, new_col, new_row, piece.color, ep_capture_pos
+        ):
+            return False
+
+        # 2. Castling: king may not start in check, pass through an attacked
+        #    square, or land on an attacked square.
+        if is_castling:
+            if self._is_in_check(piece.color, self.board):
+                return False  # cannot castle out of check
+
+            import copy
+
+            k_idx = self._col_to_idx(base_col)
+            direction = 1 if self._col_to_idx(new_col) > k_idx else -1
+            # Check every square the king crosses (excluding starting square,
+            # the landing is already covered by _move_leaves_in_check above).
+            transit_idx = k_idx + direction
+            while transit_idx != self._col_to_idx(new_col):
+                transit_col = self._idx_to_col(transit_idx)
+                scratch = copy.deepcopy(self.board)
+                orig_piece = scratch.get_piece(base_col, base_row)
+                scratch.set_piece(base_col, base_row, None)
+                scratch.set_piece(transit_col, base_row, orig_piece)
+                if self._is_in_check(piece.color, scratch):
+                    return False
+                transit_idx += direction
+        # ----------------------------------------------------------------------
 
         # Apply
         self.board.set_piece(base_col, base_row, None)
@@ -222,7 +380,6 @@ class Game:
         cyclic_delta = (row_delta + NUM_ROWS // 2) % NUM_ROWS - NUM_ROWS // 2
         if piece.type == "P" and abs(cyclic_delta) == 2:
             self._en_passant_target = (new_col, new_row)
-
         else:
             self._en_passant_target = None
 

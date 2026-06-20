@@ -82,6 +82,7 @@ class Game:
             board.set_piece(COLUMN_ROOKS, row, Piece("R", "w"))
             board.set_piece(COLUMN_KNIGHTS, row, Piece("N", "w"))
             board.set_piece(COLUMN_BISHOPS, row, Piece("B", "w"))
+
         board.set_piece("d", WHITE_QUEEN_ROW, Piece("Q", "w"))
         board.set_piece("d", WHITE_KING_ROW, Piece("K", "w"))
 
@@ -90,6 +91,7 @@ class Game:
             board.set_piece(COLUMN_ROOKS, row, Piece("R", "b"))
             board.set_piece(COLUMN_KNIGHTS, row, Piece("N", "b"))
             board.set_piece(COLUMN_BISHOPS, row, Piece("B", "b"))
+
         board.set_piece("d", BLACK_QUEEN_ROW, Piece("Q", "b"))
         board.set_piece("d", BLACK_KING_ROW, Piece("K", "b"))
 
@@ -97,6 +99,7 @@ class Game:
         for col in COLUMNS:
             for row in WHITE_PAWNS_ROWS:
                 board.set_piece(col, row, Piece("P", "w"))
+
             for row in BLACK_PAWNS_ROWS:
                 board.set_piece(col, row, Piece("P", "b"))
 
@@ -150,6 +153,7 @@ class Game:
             if key not in seen:
                 seen.add(key)
                 unique.append(sq)
+
         return unique
 
     def move(self, base_col: str, base_row: int, new_col: str, new_row: int) -> bool:
@@ -157,11 +161,11 @@ class Game:
         Move the piece on (base_col, base_row) to (new_col, new_row).
 
         Validates against get_valid_squares.  Handles:
-          • Normal moves and captures.
-          • En-passant capture (removes the captured pawn from the board).
-          • Castling (moves the rook to its post-castle square).
-          • Double pawn push tracking (updates _en_passant_target).
-          • Marking every moved piece with has_moved = True.
+          - Normal moves and captures.
+          - En-passant capture (removes the captured pawn from the board).
+          - Castling (moves the rook to its post-castle square).
+          - Double pawn push tracking (updates _en_passant_target).
+          - Marking every moved piece with has_moved = True.
 
         Returns True if the move was legal and applied; False otherwise
         (board is left unchanged on failure).
@@ -190,10 +194,11 @@ class Game:
         if piece.type == "K" and not piece.has_moved:
             col_delta = self._col_to_idx(new_col) - self._col_to_idx(base_col)
             if abs(col_delta) == 2:
-                if col_delta > 0:  # kingside  (→)
+                if col_delta > 0:  # kingside  (->)
                     castle_rook_from = (COLUMNS[-1], base_row)
                     castle_rook_to = (COLUMNS[self._col_to_idx(new_col) - 1], base_row)
-                else:  # queenside (←)
+
+                else:  # queenside (<-)
                     castle_rook_from = (COLUMNS[0], base_row)
                     castle_rook_to = (COLUMNS[self._col_to_idx(new_col) + 1], base_row)
 
@@ -217,6 +222,7 @@ class Game:
         cyclic_delta = (row_delta + NUM_ROWS // 2) % NUM_ROWS - NUM_ROWS // 2
         if piece.type == "P" and abs(cyclic_delta) == 2:
             self._en_passant_target = (new_col, new_row)
+
         else:
             self._en_passant_target = None
 
@@ -227,6 +233,7 @@ class Game:
         pr = self._phase_row(row)
         if self.board.get_piece(col, pr) is None:
             return [self.board.get_square(col, pr)]
+
         return []
 
     def _slide(
@@ -244,31 +251,38 @@ class Game:
             r = self._wrap_row(r + row_delta)
             if c_idx < 0 or c_idx >= NUM_COLS:
                 break
+
             target_col = self._idx_to_col(c_idx)
             key = (target_col, r)
             if key in seen:
                 break
+
             seen.add(key)
             target_piece = self.board.get_piece(target_col, r)
             if target_piece is None:
                 results.append(self.board.get_square(target_col, r))
+
             elif target_piece.color != color:
                 results.append(self.board.get_square(target_col, r))
                 break
+
             else:
                 break
+
         return results
 
     def _rook_moves(self, col: str, row: int, color: str) -> list:
         results = []
         for dc, dr in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             results += self._slide(col, row, color, dc, dr)
+
         return results
 
     def _bishop_moves(self, col: str, row: int, color: str) -> list:
         results = []
         for dc, dr in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
             results += self._slide(col, row, color, dc, dr)
+
         return results
 
     def _queen_moves(self, col: str, row: int, color: str) -> list:
@@ -291,10 +305,12 @@ class Game:
             new_r = self._wrap_row(row + dr)
             if new_c < 0 or new_c >= NUM_COLS:
                 continue
+
             target_col = self._idx_to_col(new_c)
             target_piece = self.board.get_piece(target_col, new_r)
             if target_piece is None or target_piece.color != color:
                 results.append(self.board.get_square(target_col, new_r))
+
         return results
 
     def _king_moves(self, col: str, row: int, color: str) -> list:
@@ -317,6 +333,7 @@ class Game:
             new_r = self._wrap_row(row + dr)
             if new_c < 0 or new_c >= NUM_COLS:
                 continue
+
             target_col = self._idx_to_col(new_c)
             target_piece = self.board.get_piece(target_col, new_r)
             if target_piece is None or target_piece.color != color:
@@ -403,6 +420,7 @@ class Game:
             new_c = c_idx + dc
             if new_c < 0 or new_c >= NUM_COLS:
                 continue
+
             diag_col = self._idx_to_col(new_c)
             diag_r = self._wrap_row(row + direction)
             target_piece = self.board.get_piece(diag_col, diag_r)
